@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>全国医学部受験会場・日程統合マップ</title>
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        /* 画面全体の高さを100%固定し、スクロールを防止 */
         html, body { 
             height: 100%; 
             margin: 0; 
@@ -16,7 +16,6 @@
             background: #f8fafc; 
         }
 
-        /* 縦方向のフレックスボックスレイアウト（地図が確実に表示されるようにする構造） */
         body {
             display: flex;
             flex-direction: column;
@@ -45,7 +44,6 @@
         .tab-btn { background: #334155; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: all 0.2s; }
         .tab-btn.active { background: #2563eb; }
         
-        /* 残りの高さをすべて地図エリアに割り当て */
         #map { 
             flex-grow: 1; 
             width: 100vw; 
@@ -85,13 +83,16 @@
 
 <div id="map"></div>
 
+<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     const map = L.map('map').setView([37.8, 137.8], 5);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-        maxZoom: 18
+    // 【重要】国土地理院 標準地図タイルに変更（日本国内で絶対に途切れない背景地図）
+    L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">国土地理院</a>',
+        maxZoom: 18,
+        minZoom: 4
     }).addTo(map);
 
     const cityViews = {
@@ -103,7 +104,7 @@
         sendai: { center: [40.0000, 140.8000], zoom: 6 }
     };
 
-    // 試験日程データ統合済みの全会場データ
+    // 全試験会場データ
     const venueData = [
         // --- 帝京 ---
         { name: '帝京大学 板橋キャンパス', univs: ['帝京大学'], schedule: '①: 1/21-1/23（3日間） / ②: 2/4-2/5（選択）', addr: '東京都板橋区加賀2-11-1', tag: '大学本学', lat: 35.7570, lng: 139.7190 },
@@ -305,7 +306,7 @@
                 <div class="popup-tag">ℹ️ ${v.tag}</div>
             `);
 
-            markersLayer.addLayer(circle);
+        markersLayer.addLayer(circle);
             bounds.push([v.lat, v.lng]);
         });
 
